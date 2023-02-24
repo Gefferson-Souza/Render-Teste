@@ -72,7 +72,15 @@ function App() {
   }
 
   const allNotes = notes.map((note) =>{
-     return <li key={note.id} onClick={() => deleteNote(note.id)} >{note.content}</li>
+     return <li key={note.id}>
+        {note.content}
+        <button onClick={() => toggleImportantOf(note.id)}>
+          {note.important ? 'not important' : 'important'}
+          </button>
+          <button onClick={() => deleteNote(note.id)}>
+            Delete
+          </button>
+        </li>
     })
 
   const importantNotes = notes.map((note) => {
@@ -85,7 +93,7 @@ function App() {
       <ul>{showAll ? allNotes : importantNotes }</ul>
       <button onClick={() => setShowAll(!showAll)}>Show {showAll ?'Important':'All'}</button>
       <form onSubmit={submitNote}>
-        <input value={newNote} onChange={(e) => setNewNote(e.target.value)}  />
+        <input value={newNote} onChange={(e) => setNewNote(e.target.value)} required />
         <button>ADD Note</button>
       </form>
     </div>
