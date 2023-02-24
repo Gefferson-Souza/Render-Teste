@@ -50,9 +50,8 @@ function App() {
       .then(returnedNote => setNotes(notes.map((n) => n.id !== id ? n : returnedNote)))
       .catch(error => {
         alert (
-          `The note ${note.content} Was already deleted from the server`
+          `The note Was already deleted from the server`
         )
-        setNotes(notes.filter(n => n.id !== id))
       })
   }
 
@@ -74,11 +73,11 @@ function App() {
   const allNotes = notes.map((note) =>{
      return <li key={note.id}>
         {note.content}
-        <button onClick={() => toggleImportantOf(note.id)}>
+         <button onClick={() => toggleImportantOf(note.id)}>
           {note.important ? 'not important' : 'important'}
           </button>
           <button onClick={() => deleteNote(note.id)}>
-            Delete
+             Delete
           </button>
         </li>
     })

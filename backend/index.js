@@ -85,7 +85,15 @@ app.post('/api/notes', (request, response) => {
 })
 
 app.put('/api/notes/:id', (request, response) => {
-  
+  const body = request.body
+  if(!body){
+    return response.status(404).json ({
+      error: 'Note was already deleted from the server'
+    })
+  }
+
+  notes = notes.map(note => note.id === body.id ? body : note)
+
 })
 
 const unknownEndpoint = (request, response) =>{

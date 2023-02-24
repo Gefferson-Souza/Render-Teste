@@ -10,7 +10,8 @@
     "build:ui" : "rm -rf dist && cd ../part-2-notes/ && npm run build && cp -r dist ../backend",
     "deploy": "fly deploy",
     "deploy:full": "npm run build:ui && npm run deploy",
-    "logs:prod": "fly logs"
+    "logs:prod": "fly logs",
+    "git:full" : "git init && git add . && git commit -m commit && git push"
   },
   "author": "Gefferson Teodoro",
   "license": "MIT",
