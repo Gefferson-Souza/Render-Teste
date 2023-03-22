@@ -1,8 +1,18 @@
 const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
-
 const api = supertest(app)
+const helper = require('./test_helper')
+const Note = require('../models/note')
+
+beforeEach(async () => {
+    await Note.deleteMany({})
+
+    const noteObjects = helper.initialNotes.map(note => new Note(note))
+    const promiseArray = noteObjects.map(note => note.save())
+    await Promise.all(promiseArray)
+})
+
 
 test('notes are returned as json', async () => {
     await api
@@ -11,17 +21,57 @@ test('notes are returned as json', async () => {
         .expect('Content-Type', /application\/json/)
 })
 
-test('there are one note', async () => {
-    const response = await api.get('/api/notes')
+test('all notes are returned', async () => {
+    const res = await api.get('/api/notes')
 
-    expect(response.body).toHaveLength(1)
+    expect(res.body).toHaveLength(helper.initialNotes.length)
 })
 
-test('the frist note is about HTTP methods', async () => {
-    const response = await api.get('/api/notes')
+test('a specific note is within the returned notes', async () => {
+    const res = await api.get('/api/notes')
 
-    expect(response.body[0].content).toBe('HTML is easy')
+    const contents = res.body.map(r => r.content)
+
+    expect(contents).toContain('Browser can execute only JavaScript')
 })
+
+test('a valid note can be added', async () => {
+    const newNote = {
+        content: 'async/await simplifies making async calls',
+        important: true,
+    }
+
+    await api
+        .post('/api/notes')
+        .send(newNote)
+        .expect(201)
+        .expect('Content-Type', /application\/json/);
+
+    const notesAtEnd = await helper.notesInDb()
+    expect(notesAtEnd).toHaveLength(helper.initialNotes.length + 1)
+
+    const contents = notesAtEnd.map(n => n.content)
+    expect(contents).toContain(
+        'async/await simplifies making async calls'
+    )
+
+})
+
+test('note without content is not added', async () => {
+    const newNote = {
+        important: true
+    }
+
+    await api
+        .post('/api/notes')
+        .send(newNote)
+        .expect(400)
+
+    const notesAtEnd = await helper.notesInDb()
+
+    expect(notesAtEnd).toHaveLength(helper.initialNotes.length)
+})
+
 
 afterAll(async () => {
     await mongoose.connection.close()
