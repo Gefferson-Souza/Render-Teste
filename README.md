@@ -12,7 +12,7 @@
   All users information;
   #
   #### /api/users/userid
-  All info about a specific user and all his blogs;
+  All info about a specific user and all his Notes;
   
   # Login
   #### /api/users   
